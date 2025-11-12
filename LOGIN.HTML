@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Forest Monitoring System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-green-200 font-sans">
+
+<div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+  <div class="bg-white rounded-2xl shadow-lg flex flex-col sm:flex-row w-full max-w-5xl">
+    <!-- Left Side Section -->
+    <div class="w-full sm:w-1/2 p-8 bg-green-200 flex flex-col justify-start rounded-t-2xl sm:rounded-l-2xl">
+      <div class="flex items-center mb-6">
+        <img src="images/img2.jpeg" alt="Logo" class="w-14 h-14 mr-3 rounded-full border-2 border-white shadow-md">
+        <h1 class="text-sm font-bold leading-tight">
+          WEB-BASED FOREST MONITORING<br>AND PERMITTING SYSTEM
+        </h1>
+      </div>
+      <div class="flex justify-center items-center flex-grow">
+        <img src="images/img1-removebg-preview.png" alt="Illustration" class="w-[320px] h-auto">
+      </div>
+    </div>
+
+    <!-- Right Side Section (Login Form) -->
+    <div class="w-full sm:w-1/2 p-8 flex flex-col justify-center">
+      <h2 class="text-2xl font-semibold mb-1">Welcome to</h2>
+      <h1 class="text-3xl font-bold text-green-600 mb-6">Permitting System</h1>
+
+      <div class="mb-4">
+        <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-100">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" />
+          <span class="text-sm font-medium text-gray-700">Login with Google</span>
+        </button>
+      </div>
+
+      <div class="flex items-center my-4">
+        <hr class="flex-grow border-gray-300">
+        <span class="mx-2 text-sm text-gray-500">or</span>
+        <hr class="flex-grow border-gray-300">
+      </div>
+
+      <form id="loginForm">
+        <div class="mb-4">
+          <label class="block text-sm font-medium">Email</label>
+          <input type="email" id="loginEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-md focus:ring-green-500 focus:outline-none" required />
+        </div>
+
+        <div class="mb-4 relative">
+          <label class="block text-sm font-medium">Password</label>
+          <input type="password" id="loginPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10 shadow-md focus:ring-green-500 focus:outline-none" required />
+          <button type="button" onclick="togglePassword()" class="absolute right-3 top-8 text-gray-500 text-sm"></button>
+        </div>
+
+        <div class="flex items-center justify-between mb-4 text-sm">
+          <label class="flex items-center">
+            <input type="checkbox" class="mr-2">
+            Remember me
+          </label>
+          <a href="#" onclick="handleForgotPassword()" class="text-green-600 hover:underline">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+          Log In
+        </button>
+      </form>
+
+      <p class="text-sm text-center mt-6">
+        Don’t have an account?
+        <a href="signup.html" class="text-green-600 font-semibold hover:underline">Register</a>
+      </p>
+
+      <div id="loginResponse" class="text-center mt-4 text-red-500 hidden">
+        Invalid email or password!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDQxdIZeDgZelFkb3VPiNqndnEwLX_13WA",
+    authDomain: "forestmonitoring-1b569.firebaseapp.com",
+    projectId: "forestmonitoring-1b569",
+    storageBucket: "forestmonitoring-1b569.appspot.com",
+    messagingSenderId: "298399687105",
+    appId: "1:298399687105:web:5fac5838b540523d770f40",
+    measurementId: "G-S18G5FX9SM"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(result => {
+        localStorage.setItem("loggedInUser", result.user.displayName || result.user.email || "User");
+        window.location.href = "index.html"; // Redirect to your dashboard
+      })
+      .catch(() => {
+        document.getElementById('loginResponse').classList.remove('hidden');
+      });
+  });
+
+  function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(result => {
+        localStorage.setItem("loggedInUser", result.user.displayName || result.user.email || "User");
+        window.location.href = "index.html"; // Redirect to your dashboard
+      })
+      .catch(error => {
+        alert("Google login failed: " + error.message);
+      });
+  }
+
+  function handleForgotPassword() {
+    const email = prompt("Please enter your registered email:");
+    if (email) {
+      auth.sendPasswordResetEmail(email)
+        .then(() => alert("Password reset sent to " + email))
+        .catch(error => alert("Error: " + error.message));
+    }
+  }
+
+  function togglePassword() {
+    const input = document.getElementById("loginPassword");
+    input.type = input.type === "password" ? "text" : "password";
+  }
+</script>
+
+</body>
+</html>

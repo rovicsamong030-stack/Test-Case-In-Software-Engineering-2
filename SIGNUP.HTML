@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - Forest Monitoring System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-green-50 font-sans text-gray-900">
+
+  <div class="min-h-screen flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-lg sm:max-w-2xl bg-white rounded-2xl shadow-lg p-10">
+      <h2 class="text-3xl font-bold text-center mb-6 text-green-800 uppercase">Create Your Account</h2>
+      <form id="signUpForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium mb-1">First Name</label>
+            <input type="text" id="firstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Middle Name</label>
+            <input type="text" id="middleName" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Last Name</label>
+            <input type="text" id="lastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Birthdate</label>
+            <input type="date" id="birthdate" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Email</label>
+            <input type="email" id="email" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Confirm Email</label>
+            <input type="email" id="confirmEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Password</label>
+            <input type="password" id="password" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Confirm Password</label>
+            <input type="password" id="confirmPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium mb-1">Phone Number</label>
+            <input type="text" id="phone" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Address</label>
+            <input type="text" id="address" class="w-full border border-gray-300 rounded-lg px-4 py-2" required />
+          </div>
+        </div>
+
+        <button type="submit" class="w-full mt-6 bg-green-700 text-white font-semibold py-3 rounded-lg hover:bg-green-800 transition">
+          Sign Up
+        </button>
+      </form>
+
+      <p class="text-center mt-6 text-sm">
+        Already have an account?
+        <a href="login.html" class="text-green-700 font-semibold hover:underline">Log In</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQxdIZeDgZelFkb3VPiNqndnEwLX_13WA",
+      authDomain: "forestmonitoring-1b569.firebaseapp.com",
+      projectId: "forestmonitoring-1b569",
+      storageBucket: "forestmonitoring-1b569.appspot.com",
+      messagingSenderId: "298399687105",
+      appId: "1:298399687105:web:5fac5838b540523d770f40",
+      measurementId: "G-S18G5FX9SM"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Sign-Up Form Handler
+    document.getElementById('signUpForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const firstName = document.getElementById('firstName').value;
+      const middleName = document.getElementById('middleName').value;
+      const lastName = document.getElementById('lastName').value;
+      const birthdate = document.getElementById('birthdate').value;
+      const email = document.getElementById('email').value;
+      const confirmEmail = document.getElementById('confirmEmail').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+
+      if (email !== confirmEmail) {
+        alert("Emails do not match.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      // Create user with Firebase Authentication
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // User signed up successfully
+          const user = userCredential.user;
+
+          // Optionally save extra user data to localStorage (not for sensitive info)
+          localStorage.setItem('userFirstName', firstName);
+          localStorage.setItem('userMiddleName', middleName);
+          localStorage.setItem('userLastName', lastName);
+          localStorage.setItem('userBirthdate', birthdate);
+          localStorage.setItem('userPhone', phone);
+          localStorage.setItem('userAddress', address);
+
+          // Redirect to login page after successful sign-up
+          window.location.href = 'login.html';
+        })
+        .catch((error) => {
+          // Handle errors (e.g., email already in use)
+          alert(error.message);
+        });
+    });
+  </script>
+
+</body>
+</html>
